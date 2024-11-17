@@ -5,6 +5,9 @@ const { PrismaClient } = require('@prisma/client');
 const app = express();
 const prisma = new PrismaClient();
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(express.json()); // Suporte para JSON no body das requisições
 
 // Inicializar o servidor
