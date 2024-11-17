@@ -353,3 +353,40 @@ app.get('/get_vinculos/:identificador', async (req, res) => {
   }
 });
 
+/* API para atualizar os atributos de um Ativo */
+app.put('/update_ativo', async (req, res) => {
+  const { identificador, atributos } = req.body;
+
+  // Validação inicial
+  if (!identificador) {
+    return res.status(400).json({ error: 'O identificador do ativo é obrigatório.' });
+  }
+  if (!atributos || typeof atributos !== 'object') {
+    return res.status(400).json({ error: 'Os atributos devem ser fornecidos no formato de objeto.' });
+  }
+
+  try {
+    // Verifica se o ativo existe
+    const ativo = await prisma.ativo.findUnique({
+      where: { identificador },
+    });
+
+    if (!ativo) {
+      return res.status(404).json({ error: 'Ativo não encontrado.' });
+    }
+
+    // Atualiza os atributos do ativo
+    const updatedAtivo = await prisma.ativo.update({
+      where: { identificador },
+      data: { atributos },
+    });
+
+    res.status(200).json({
+      message: `Ativo '${identificador}' atualizado com sucesso.`,
+      ativo: updatedAtivo,
+    });
+  } catch (error) {
+    res.status(500).json({ error: `Erro ao atualizar o ativo: ${error.message}` });
+  }
+});
+
