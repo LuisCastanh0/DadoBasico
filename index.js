@@ -1,20 +1,17 @@
-require('dotenv').config(); // Carrega variáveis do .env
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 
 const app = express();
 const prisma = new PrismaClient();
 
-const cors = require('cors');
-app.use(cors());
-
-app.use(express.json()); // Suporte para JSON no body das requisições
+app.use(express.json());
 
 // Inicializar o servidor
-app.listen(3000, () => {
-  console.log('Servidor rodando em http://localhost:3000');
-});
-
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3000, () => {
+    console.log('Servidor rodando em http://localhost:3000');
+  });
+}
 /* API para criar uma Classe (Tabela) */
 app.post('/create_class', async (req, res) => {
   const { identificador, atributos } = req.body;
@@ -390,3 +387,4 @@ app.put('/update_ativo', async (req, res) => {
   }
 });
 
+module.exports = app; // Exporta o app para os testes
