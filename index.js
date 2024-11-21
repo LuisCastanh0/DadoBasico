@@ -4,6 +4,9 @@ const { PrismaClient } = require('@prisma/client');
 const app = express();
 const prisma = new PrismaClient();
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(express.json());
 
 // Inicializar o servidor
@@ -14,18 +17,17 @@ if (process.env.NODE_ENV !== 'test') {
 }
 /* API para criar uma Classe (Tabela) */
 app.post('/create_class', async (req, res) => {
+  console.log('Requisição recebida:', req.body);
   const { identificador, atributos } = req.body;
 
   try {
     const classe = await prisma.classe.create({
-      data: {
-        identificador,
-        atributos,
-      },
+      data: { identificador, atributos },
     });
-    res.status(201).json(classe); // Retorna a classe criada
+    res.status(201).json(classe);
   } catch (error) {
-    res.status(400).json({ error: error.message }); // Retorna o erro, se houver
+    console.error('Erro ao criar classe:', error.message);
+    res.status(400).json({ error: error.message });
   }
 });
 
